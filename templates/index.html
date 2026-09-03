@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sports Predictor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;background:#0f172a;color:white;padding:20px}
+.card{background:#1e293b;padding:20px;border-radius:15px;max-width:400px;margin:auto}
+input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none}
+button{background:#22c55e;color:black;font-weight:bold;font-size:16px}
+.result{margin-top:15px;padding:15px;background:#0f172a;border-radius:10px}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>⚽ Sports Predictor</h2>
+<form method="POST" action="/predict">
+<input type="text" name="home" placeholder="Home Team (e.g. Arsenal)" required>
+<input type="text" name="away" placeholder="Away Team (e.g. Chelsea)" required>
+<button type="submit">Predict Match</button>
+</form>
+{% if prediction %}
+<div class="result">
+<h3>Prediction: {{ prediction }}</h3>
+<p>{{ confidence }}</p>
+</div>
+{% endif %}
+</div>
+</body>
+                                     </html>
