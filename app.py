@@ -58,4 +58,17 @@ el.innerHTML='<h3>'+d.match+'</h3><small>'+d.league_name+'</small><p><b>Winner:<
 def predict():
     j=request.get_json()
     league=j.get('league','other'); h=j.get('home_team','Home'); a=j.get('away_team','Away')
-    hf=j.get('home_form',[1]); af=j.get('
+    hf=j.get('home_form',[1]); af=j.get('away_form',[1])
+    leagues={"premier":{"name":"Premier League","adv":0.30,"avg":2.85},"laliga":{"name":"La Liga","adv":0.25,"avg":2.65},"seriea":{"name":"Serie A","adv":0.28,"avg":2.55},"bundes":{"name":"Bundesliga","adv":0.32,"avg":3.10},"ligue1":{"name":"Ligue 1","adv":0.27,"avg":2.70},"eredivisie":{"name":"Eredivisie","adv":0.30,"avg":3.00},"portugal":{"name":"Primeira Liga","adv":0.35,"avg":2.50},"ucl":{"name":"Champions League","adv":0.20,"avg":2.90},"europa":{"name":"Europa League","adv":0.20,"avg":2.75},"mls":{"name":"MLS","adv":0.25,"avg":2.80},"saudi":{"name":"Saudi Pro League","adv":0.30,"avg":2.95},"brasil":{"name":"Brasileirão","adv":0.40,"avg":2.40},"argentina":{"name":"Argentina Liga","adv":0.38,"avg":2.20},"turkey":{"name":"Süper Lig","adv":0.35,"avg":2.85},"other":{"name":"Other League","adv":0.30,"avg":2.60}}
+    f=leagues.get(league, leagues["other"])
+    ha=sum(hf)/len(hf) if hf else 1; aa=sum(af)/len(af) if af else 1
+    ha_adj=ha+f["adv"]; diff=ha_adj-aa; tot=ha+aa
+    if diff>0.75: win=f"{h} WIN"; dc="1X"; c="76%"
+    elif diff<-0.55: win=f"{a} WIN"; dc="X2"; c="74%"
+    else: win="DRAW"; dc="1X or X2"; c="62%"
+    goals="Over 2.5" if tot>=f["avg"] else "Over 1.5" if tot>1.5 else "Under 1.5"
+    btts="YES" if ha>0.7 and aa>0.7 else "NO"
+    return jsonify({"match":f"{h} vs {a}","league_name":f["name"],"winner":win,"double_chance":dc,"goals":goals,"btts":btts,"confidence":c,"note":f"Stats for {f['name']} Avg {f['avg']} goals"})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=10000)
